@@ -18,18 +18,16 @@ public class ApiHandler implements HttpHandler {
         HttpResponse response;
         try {
             response = ParseRequest(t.getRequestURI(), t.getRequestMethod());
-            t.sendResponseHeaders(response.Code, response.Body.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.Body.getBytes());
-            os.close();
-            System.out.println("Send " + response.Body + "response");
         }
         catch (Exception ex) {
             System.out.println("Failed to process request");
-            t.sendResponseHeaders(400,0);
-            OutputStream os = t.getResponseBody();
-            os.close();
+            response = new HttpResponse(400, "Failed to process request");
         }
+        t.sendResponseHeaders(response.Code, response.Body.length());
+        OutputStream os = t.getResponseBody();
+        os.write(response.Body.getBytes());
+        os.close();
+        System.out.println("Send " + response.Body + " response");
     }
 
     HttpResponse ParseRequest(URI uri, String method) throws BadRequestException {
