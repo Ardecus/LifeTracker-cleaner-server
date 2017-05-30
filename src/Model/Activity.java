@@ -8,17 +8,14 @@ enum Type {Toggle, Marker, Metric};
 
 public class Activity {
     public int Id;
-    //public User User; //UserId in db?
-    public ActivityPanel Panel;
+    public int PanelId;
     public String Name;
-    public Type Type; //TypeId in db?
+    public Type Type; //0-1-2 in db?
     public Color Color; //ewr.
-    public char Icon; //some shit like ♥ ♦ ☼ ?
     public int Min;
     public int Max;
 
     /*
-    public bool VkAutoShared;
     public bool FbAutoShared;
     public bool TwAutoShared;
     */

@@ -8,7 +8,7 @@ public class User {
     public String Login;
     public String Password; //not a simple string?
 
-    public ArrayList<User> Friends;
+    public int[] FriendsId;
     //nata's stuff
     //vk/tw/fb/whatever creds
 }

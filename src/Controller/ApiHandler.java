@@ -17,7 +17,7 @@ public class ApiHandler implements HttpHandler {
         System.out.println("Request gotten");
         HttpResponse response;
         try {
-            response = ParseRequest(t.getRequestURI(), t.getRequestMethod());
+            response = ParseRequest(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
         }
         catch (Exception ex) {
             System.out.println("Failed to process request");
@@ -30,7 +30,7 @@ public class ApiHandler implements HttpHandler {
         System.out.println("Send " + response.Body + " response");
     }
 
-    HttpResponse ParseRequest(URI uri, String method) throws BadRequestException {
+    HttpResponse ParseRequest(URI uri, String method, String body) throws BadRequestException {
         Node node = uriTree.top;
         ArrayList<String> params = new ArrayList<>();
         partparse:
@@ -51,6 +51,7 @@ public class ApiHandler implements HttpHandler {
             params.add(str);
             node = node.Subnodes.get(0);
         }
+        params.add(body);
         String[] arrayparams = new String[params.size()];
         params.toArray(arrayparams);
         return node.Actions[UriTree.RequestMethod.get(method)].Process(arrayparams);
