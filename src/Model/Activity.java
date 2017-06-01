@@ -1,22 +1,35 @@
 package Model;
 
-import java.awt.*;
-
-//NAWP
-//it won't require a separate table in db, will it?
-enum Type {Toggle, Marker, Metric};
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Activity {
-    public int Id;
-    public int PanelId;
+    public Long Id;
+    //public Long PanelId;
+    public Long UserId;
     public String Name;
-    public Type Type; //0-1-2 in db?
-    public Color Color; //ewr.
-    public int Min;
-    public int Max;
+    //public Type Type; //0-1-2 in db?
+    //public int Min;
+    //public int Max;
 
-    /*
-    public bool FbAutoShared;
-    public bool TwAutoShared;
-    */
+    public Activity() {
+        Id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+    }
+
+    public Activity(String name, Long userId) {//, int type){
+        Id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        UserId = userId;
+        Name = name;
+        //Type = Model.Type.values()[type];
+    }
+
+    //public Activity(String name, int min, int max){
+    //    Id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+    //    PanelId = 1L;
+    //    Name = name;
+    //    Type = Model.Type.Metric;
+    //    Min = min;
+    //    Max = max;
+    //}
 }
+

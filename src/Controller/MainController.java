@@ -4,7 +4,20 @@ import Model.*;
 import com.google.gson.Gson;
 import Service.HttpResponse;
 
+import java.util.Base64;
+import java.util.HashMap;
+
 public class MainController {
+    static String auth;
+    static HashMap<String, String> tokens = new HashMap<>();
+
+    public static void GetTokens() {
+        Auth[] auths = DatabaseController.GetAuths();
+        for (Auth auth : auths) {
+            tokens.put(Long.toString(auth.UserId), Base64.getEncoder().encodeToString(auth.Password.getBytes()));
+        }
+    }
+
     static Gson g = new Gson();
     //GET
     public static HttpResponse GetUser(String[] params) { //params = {userid}
@@ -21,6 +34,7 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
+    /*
     public static HttpResponse GetPanel(String[] params) { //params = { userid???, panelid}
         try {
             Panel gotten = DatabaseController.GetPanel(params[1]);
@@ -49,9 +63,10 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse GetActivity(String[] params) { //params = {userid???, panelid???, activityid}
+    */
+    public static HttpResponse GetActivity(String[] params) { //params = {userid???, activityid}
         try {
-            Activity gotten = DatabaseController.GetActivity(params[2]);
+            Activity gotten = DatabaseController.GetActivity(params[1]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -63,9 +78,9 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse GetActivities(String[] params) { //params = {userid???, panelid}
+    public static HttpResponse GetActivities(String[] params) { //params = {userid}
         try {
-            Activity[] gotten = DatabaseController.GetActivities(params[1]);
+            Activity[] gotten = DatabaseController.GetActivities(params[0]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -77,9 +92,9 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse GetCheck(String[] params) { //params = {userid???, panelid???, activityid???, checkid}
+    public static HttpResponse GetCheck(String[] params) { //params = {userid???, activityid???, checkid}
         try {
-            Check gotten = DatabaseController.GetCheck(params[3]);
+            Check gotten = DatabaseController.GetCheck(params[2]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -91,9 +106,9 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse GetChecks(String[] params) { //params = {userid???, panelid???, activityid}
+    public static HttpResponse GetChecks(String[] params) { //params = {userid???, activityid}
         try {
-            Check[] gotten = DatabaseController.GetChecks(params[2]);
+            Check[] gotten = DatabaseController.GetChecks(params[1]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -107,15 +122,26 @@ public class MainController {
     }
 
     //not done
-    public static HttpResponse FindSimilar(String[] params) {
-        return new HttpResponse(400, "ohfuck");
+    public static HttpResponse GetFriends(String[] params) {
+        return new HttpResponse(400, "Not yet implemented :(");
+    }
+    public static HttpResponse GetSimilar(String[] params) {
+        return new HttpResponse(400, "Not yet implemented :(");
+    }
+
+    public static HttpResponse PublishActivity(String[] params) {
+        return new HttpResponse(400, "Not yet implemented :(");
+    }
+
+    public static HttpResponse AuthoriseUser(String[] params) {
+        return new HttpResponse(400, "Not yet implemented :(");
     }
 
     //POST
     public static HttpResponse PostUser(String[] params) { //params = {body}
         try {
-            User gotten = g.fromJson(params[0], User.class);
-            DatabaseController.PostUser(gotten);
+            Auth gotten = g.fromJson(params[0], Auth.class);
+            DatabaseController.PostAuth(gotten);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -123,7 +149,9 @@ public class MainController {
             return new HttpResponse(409);
         }
     }
+    /*
     public static HttpResponse PostPanel(String[] params) { //params = {userid, body}
+
         try {
             Panel gotten = g.fromJson(params[1], Panel.class);
             gotten.UserId = Integer.parseInt(params[0]); //?
@@ -135,10 +163,11 @@ public class MainController {
             return new HttpResponse(409);
         }
     }
-    public static HttpResponse PostActivity(String[] params) { //params = {userid???, panelid, body}
+    */
+    public static HttpResponse PostActivity(String[] params) { //params = {userid, body}
         try {
-            Activity gotten = g.fromJson(params[2], Activity.class);
-            gotten.PanelId = Integer.parseInt(params[1]); //?
+            Activity gotten = g.fromJson(params[1], Activity.class);
+            gotten.UserId = Long.parseLong(params[0]); //?
             DatabaseController.PostActivity(gotten);
             return new HttpResponse(201);
         }
@@ -147,10 +176,10 @@ public class MainController {
             return new HttpResponse(409);
         }
     }
-    public static HttpResponse PostCheck(String[] params) { //params = {userid???, panelid???, activityid, body}
+    public static HttpResponse PostCheck(String[] params) { //params = {userid???, activityid, body}
         try {
-            Check gotten = g.fromJson(params[3], Check.class);
-            gotten.ActivityId = Integer.parseInt(params[2]); //?
+            Check gotten = g.fromJson(params[2], Check.class);
+            gotten.ActivityId = Long.parseLong(params[1]); //?
             DatabaseController.PostCheck(gotten);
             return new HttpResponse(201);
         }
@@ -172,7 +201,7 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse PutPanel(String[] params) { //params = {userid, body}
+    /*public static HttpResponse PutPanel(String[] params) { //params = {userid, body}
         try {
             Panel gotten = g.fromJson(params[1], Panel.class);
             gotten.UserId = Integer.parseInt(params[0]); //?
@@ -183,11 +212,11 @@ public class MainController {
         {
             return new HttpResponse(400);
         }
-    }
-    public static HttpResponse PutActivity(String[] params) { //params = {userid???, panelid, body}
+    }*/
+    public static HttpResponse PutActivity(String[] params) { //params = {userid, body}
         try {
-            Activity gotten = g.fromJson(params[2], Activity.class);
-            gotten.PanelId = Integer.parseInt(params[1]); //?
+            Activity gotten = g.fromJson(params[1], Activity.class);
+            gotten.UserId = Long.parseLong(params[0]); //?
             DatabaseController.PutActivity(gotten);
             return new HttpResponse(201);
         }
@@ -208,7 +237,7 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    public static HttpResponse DeletePanel(String[] params) { //params = {userid???, panelid}
+    /*public static HttpResponse DeletePanel(String[] params) { //params = {userid???, panelid}
         try {
             DatabaseController.DeletePanel(params[1]);
             return new HttpResponse(200);
@@ -217,15 +246,23 @@ public class MainController {
         {
             return new HttpResponse(400);
         }
-    }
-    public static HttpResponse DeleteActivity(String[] params) { //params = {userid???, panelid???, activityid
+    }*/
+    public static HttpResponse DeleteActivity(String[] params) { //params = {userid???, activityid
         try {
-            DatabaseController.DeleteActivity(params[2]);
+            DatabaseController.DeleteActivity(params[1]);
             return new HttpResponse(200);
         }
         catch(Exception ex)
         {
             return new HttpResponse(400);
         }
+    }
+
+    public static boolean CheckAuth(String s) {
+        return auth.equals(tokens.get(s));
+    }
+
+    public static void SetAuth(String s) {
+        auth = s;
     }
 }

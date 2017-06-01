@@ -16,16 +16,22 @@ public class UriTree {
 
     public UriTree() {
         top = new Node("", null);
-        Node first = new Node("api", null);
+        Node first = new Node("api", new ProcessRequest[]{
+                null,
+                (params) -> PostUser(params),
+                null,
+                null
+        });
         top.Subnodes.add(first);
         //user
         Node user = new Node("_userid", new ProcessRequest[]{
                 (params) -> GetUser(params),
-                (params) -> PostUser(params),
+                (params) -> PostActivity(params),
                 (params) -> PutUser(params),
                 (params) -> DeleteUser(params)
         });
         first.Subnodes.add(user);
+        /*
         //panel
         Node panel = new Node("_panelid", new ProcessRequest[]{
                 (params) -> GetPanel(params),
@@ -40,48 +46,45 @@ public class UriTree {
                 //null,
                 //null,
                 //null
-        }));
+        }));*/
         //activity
         Node activity = new Node("_activityid", new ProcessRequest[]{
                 (params) -> GetActivity(params),
-                (params) -> PostActivity(params),
+                (params) -> PostCheck(params),
                 (params) -> PutActivity(params),
                 (params) -> DeleteActivity(params)
         });
-        panel.Subnodes.add(activity);
+        user.Subnodes.add(activity);
         //-
-        panel.Subnodes.add(new Node("activities", new ProcessRequest[]{
+        user.Subnodes.add(new Node("activities", new ProcessRequest[]{
                 (params) -> GetActivities(params)
-                //null,
-                //null,
-                //null
+        }));
+        user.Subnodes.add(new Node("friends", new ProcessRequest[]{
+                (params) -> GetFriends(params)
+        }));
+        user.Subnodes.add(new Node("similar", new ProcessRequest[]{
+                (params) ->GetSimilar(params)
         }));
         //check
         Node check = new Node("_checkid", new ProcessRequest[]{
-                (params) -> GetCheck(params),
-                (params) -> PostCheck(params)
-                //null,
-                //null
+                (params) -> GetCheck(params)
         });
         activity.Subnodes.add(check);
         //-
         activity.Subnodes.add(new Node("checks", new ProcessRequest[]{
                 (params) -> GetChecks(params)
-                //null,
-                //null,
-                //null
         }));
 
         /*
         current version of a tree:
         .
         ____-userid
-        ____________panels
-        ____________-panelid
-        _____________________activities
-        _____________________-activityid
-        _________________________________checks
-        _________________________________-checkid
+        ____________activities
+        ____________friends
+        ____________similar
+        ____________-activityid
+        ________________________checks
+        ________________________-checkid
 
          */
     }

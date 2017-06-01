@@ -14,11 +14,20 @@ public class ApiHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-        System.out.println("Request gotten");
+        System.out.println("Request gotten for " + t.getRequestURI());
+        System.out.println(t.getResponseBody());
         HttpResponse response;
         try {
-            response = ParseRequest(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
+            //String auth = t.getRequestHeaders().getFirst("Authorisation");
+            //auth = Base64.getDecoder().decode(auth.getBytes()).toString();
+            //MainController.SetAuth(auth);
+            //response = ParseRequest(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
+            response = ParseRequestNoAuthCheck(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
         }
+        //catch (UnauthorizedException ex) {
+        //    System.out.println("Unauthorized request");
+        //    response = new HttpResponse(403, "Unauthorized request");
+        //}
         catch (Exception ex) {
             System.out.println("Failed to process request");
             response = new HttpResponse(400, "Failed to process request");
@@ -30,7 +39,7 @@ public class ApiHandler implements HttpHandler {
         System.out.println("Send " + response.Body + " response");
     }
 
-    HttpResponse ParseRequest(URI uri, String method, String body) throws BadRequestException {
+    HttpResponse ParseRequestNoAuthCheck(URI uri, String method, String body) throws BadRequestException {
         Node node = uriTree.top;
         ArrayList<String> params = new ArrayList<>();
         partparse:
@@ -51,6 +60,38 @@ public class ApiHandler implements HttpHandler {
             params.add(str);
             node = node.Subnodes.get(0);
         }
+
+        params.add(body);
+        String[] arrayparams = new String[params.size()];
+        params.toArray(arrayparams);
+        return node.Actions[UriTree.RequestMethod.get(method)].Process(arrayparams);
+    }
+    HttpResponse ParseRequest(URI uri, String method, String body) throws BadRequestException, UnauthorizedException {
+        Node node = uriTree.top;
+        ArrayList<String> params = new ArrayList<>();
+        partparse:
+        for (String str : uri.toString().split("/")) {
+            if (str.isEmpty()) {
+                continue partparse;
+            }
+            for (Node subnode : node.Subnodes) {
+                if (str.equals(subnode.Name)) {
+                    node = subnode;
+                    continue partparse;
+                }
+            }
+            if (node.Subnodes.size() == 0) {
+                System.out.println("Too many parameters");
+                throw new BadRequestException();
+            }
+            params.add(str);
+            node = node.Subnodes.get(0);
+        }
+
+        if (params.size() > 0 && !MainController.CheckAuth(params.get(0))) {
+            throw new UnauthorizedException();
+        }
+
         params.add(body);
         String[] arrayparams = new String[params.size()];
         params.toArray(arrayparams);
