@@ -1,11 +1,9 @@
 package Model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class User {
+public class User extends Identified{
     //idgaf about a smell of this
-    public Long Id;
     public String Name;
 
     public int Level = 1;
@@ -15,7 +13,7 @@ public class User {
     public Long[] FriendsId;
 
     public User(String name) {
-        Id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        GenerateId();
         Name = name;
     }
 }

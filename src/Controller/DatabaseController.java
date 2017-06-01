@@ -19,18 +19,6 @@ public class DatabaseController {
         res.FriendsId = new Long[] {123L, 358L};
         return res;
     } //yep, like this
-    //public static Panel GetPanel(String panelid) {
-    //    Panel res = new Panel();
-    //    res.Name = "KURSATCH";
-    //    res.Private = false;
-    //    return res;
-    //}
-    //public static Panel[] GetPanels(String userid) {
-    //    Panel res = new Panel();
-    //    res.Name = "KURSATCH";
-    //    res.Private = false;
-    //    return new Panel[]{res};
-    //}
     public static Activity GetActivity(String activityid) {
         Activity res = new Activity();
         res.Name = "PIZDOSHIT'";
@@ -41,7 +29,6 @@ public class DatabaseController {
         Activity res = new Activity();
         res.Name = "PIZDOSHIT'";
         res.UserId = Long.parseLong(userid);
-        //res.Type = Type.Marker;
         return new Activity[]{res};
     }
     public static Check GetCheck(String checkid) {
@@ -57,18 +44,19 @@ public class DatabaseController {
     //POST
     public static void PostAuth(Auth gotten) {}
     public static void PostUser(User user) {}
-    //public static void PostPanel(Panel panel){}
     public static void PostActivity(Activity activity) {}
     public static void PostCheck(Check check) {}
+    public static void PostFriend(Long id, Long friendId) {}
 
     //PUT
     public static void PutUser(User user) {}
-    //public static void PutPanel(Panel panel){}
     public static void PutActivity(Activity activity) {}
 
     //DELETE
     public static void DeleteUser(String userid) {}
     public static void DeleteActivity(String activityid) {}
+    public static void DeleteFriend(Long id, Long friendId) {}
+
 
 
 }

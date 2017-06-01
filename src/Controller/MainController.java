@@ -11,13 +11,6 @@ public class MainController {
     static String auth;
     static HashMap<String, String> tokens = new HashMap<>();
 
-    public static void GetTokens() {
-        Auth[] auths = DatabaseController.GetAuths();
-        for (Auth auth : auths) {
-            tokens.put(Long.toString(auth.UserId), Base64.getEncoder().encodeToString(auth.Password.getBytes()));
-        }
-    }
-
     static Gson g = new Gson();
     //GET
     public static HttpResponse GetUser(String[] params) { //params = {userid}
@@ -34,36 +27,6 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    /*
-    public static HttpResponse GetPanel(String[] params) { //params = { userid???, panelid}
-        try {
-            Panel gotten = DatabaseController.GetPanel(params[1]);
-            if (gotten == null) {
-                return new HttpResponse(404);
-            }
-            String res = g.toJson(gotten);
-            return new HttpResponse(200, res);
-        }
-        catch(Exception ex)
-        {
-            return new HttpResponse(400);
-        }
-    }
-    public static HttpResponse GetPanels(String[] params) { //params = {userid}
-        try {
-            Panel[] gotten = DatabaseController.GetPanels(params[0]);
-            if (gotten == null) {
-                return new HttpResponse(404);
-            }
-            String res = g.toJson(gotten);
-            return new HttpResponse(200, res);
-        }
-        catch(Exception ex)
-        {
-            return new HttpResponse(400);
-        }
-    }
-    */
     public static HttpResponse GetActivity(String[] params) { //params = {userid???, activityid}
         try {
             Activity gotten = DatabaseController.GetActivity(params[1]);
@@ -130,18 +93,20 @@ public class MainController {
     }
 
     public static HttpResponse PublishActivity(String[] params) {
-        return new HttpResponse(400, "Not yet implemented :(");
+        return new HttpResponse(400, "NI");
     }
-
     public static HttpResponse AuthoriseUser(String[] params) {
-        return new HttpResponse(400, "Not yet implemented :(");
+        return new HttpResponse(400, "NI");
     }
 
     //POST
     public static HttpResponse PostUser(String[] params) { //params = {body}
         try {
             Auth gotten = g.fromJson(params[0], Auth.class);
+            User user = new User(gotten.Name);
+            gotten.Id = user.Id;
             DatabaseController.PostAuth(gotten);
+            DatabaseController.PostUser(user);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -149,21 +114,6 @@ public class MainController {
             return new HttpResponse(409);
         }
     }
-    /*
-    public static HttpResponse PostPanel(String[] params) { //params = {userid, body}
-
-        try {
-            Panel gotten = g.fromJson(params[1], Panel.class);
-            gotten.UserId = Integer.parseInt(params[0]); //?
-            DatabaseController.PostPanel(gotten);
-            return new HttpResponse(201);
-        }
-        catch(Exception ex)
-        {
-            return new HttpResponse(409);
-        }
-    }
-    */
     public static HttpResponse PostActivity(String[] params) { //params = {userid, body}
         try {
             Activity gotten = g.fromJson(params[1], Activity.class);
@@ -193,6 +143,14 @@ public class MainController {
     public static HttpResponse PutUser(String[] params) { //params = {body}
         try {
             User gotten = g.fromJson(params[0], User.class);
+            User prev = DatabaseController.GetUser(gotten.Id.toString());
+            if (gotten.FriendsId != prev.FriendsId) {
+                int i = gotten.FriendsId.length - 1;
+                while (i > prev.FriendsId.length - 1) {
+                    DatabaseController.PostFriend(gotten.Id, gotten.FriendsId[i]);
+                    i--;
+                }
+            }
             DatabaseController.PutUser(gotten);
             return new HttpResponse(201);
         }
@@ -201,18 +159,6 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    /*public static HttpResponse PutPanel(String[] params) { //params = {userid, body}
-        try {
-            Panel gotten = g.fromJson(params[1], Panel.class);
-            gotten.UserId = Integer.parseInt(params[0]); //?
-            DatabaseController.PutPanel(gotten);
-            return new HttpResponse(201);
-        }
-        catch(Exception ex)
-        {
-            return new HttpResponse(400);
-        }
-    }*/
     public static HttpResponse PutActivity(String[] params) { //params = {userid, body}
         try {
             Activity gotten = g.fromJson(params[1], Activity.class);
@@ -237,16 +183,6 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
-    /*public static HttpResponse DeletePanel(String[] params) { //params = {userid???, panelid}
-        try {
-            DatabaseController.DeletePanel(params[1]);
-            return new HttpResponse(200);
-        }
-        catch(Exception ex)
-        {
-            return new HttpResponse(400);
-        }
-    }*/
     public static HttpResponse DeleteActivity(String[] params) { //params = {userid???, activityid
         try {
             DatabaseController.DeleteActivity(params[1]);
@@ -258,10 +194,16 @@ public class MainController {
         }
     }
 
+
+    public static void GetTokens() {
+        Auth[] auths = DatabaseController.GetAuths();
+        for (Auth auth : auths) {
+            tokens.put(Long.toString(auth.Id), Base64.getEncoder().encodeToString(auth.Password.getBytes()));
+        }
+    }
     public static boolean CheckAuth(String s) {
         return auth.equals(tokens.get(s));
     }
-
     public static void SetAuth(String s) {
         auth = s;
     }

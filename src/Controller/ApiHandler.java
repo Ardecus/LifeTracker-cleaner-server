@@ -12,6 +12,11 @@ import java.util.ArrayList;
 public class ApiHandler implements HttpHandler {
     UriTree uriTree = new UriTree();
 
+    public ApiHandler()
+    {
+        MainController.GetTokens();
+    }
+
     @Override
     public void handle(HttpExchange t) throws IOException {
         System.out.println("Request gotten for " + t.getRequestURI());
