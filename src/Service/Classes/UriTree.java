@@ -1,4 +1,6 @@
-package Service;
+package Service.Classes;
+
+import Service.Interfaces.ProcessRequest;
 
 import java.util.HashMap;
 
@@ -62,8 +64,9 @@ public class UriTree {
         user.Subnodes.add(new Node("friends", new ProcessRequest[]{
                 (params) -> GetFriends(params)
         }));
-        user.Subnodes.add(new Node("similar", new ProcessRequest[]{
-                (params) ->GetSimilar(params)
+        user.Subnodes.add(new Node("authorise", new ProcessRequest[]{
+                null,
+                (params) ->AuthoriseUser(params)
         }));
         //check
         Node check = new Node("_checkid", new ProcessRequest[]{
@@ -80,8 +83,8 @@ public class UriTree {
         .
         ____-userid
         ____________activities
+        ____________authorise
         ____________friends
-        ____________similar
         ____________-activityid
         ________________________checks
         ________________________-checkid

@@ -1,4 +1,4 @@
-import Controller.HttpsController;
+import Controller.Server.Https;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -24,7 +24,7 @@ public class HTTPSClient {
         char[]  keypass = "serverpass".toCharArray();
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(HttpsController.class.getResourceAsStream("client.jks"), passphrase);
+        ks.load(Https.class.getResourceAsStream("client.jks"), passphrase);
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, keypass);

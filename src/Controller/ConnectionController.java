@@ -1,14 +1,14 @@
 package Controller;
 
-import java.net.InetSocketAddress;
-import com.sun.net.httpserver.HttpServer;
+import Controller.ApiHandler.NoAuthHandler;
+import Controller.Server.Http;
+import Controller.Server.Server;
+import Controller.Server.ServerFactory;
 
 public class ConnectionController {
 
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8989), 0);
-        server.createContext("/api", new ApiHandler());
-        server.start();
-        System.out.println("Server started");
+        Server server = ServerFactory.CreateServer(Http.class, NoAuthHandler.class, 8989);
+        server.Start();
     }
 }

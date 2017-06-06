@@ -2,14 +2,14 @@ package Controller;
 
 import Model.*;
 import com.google.gson.Gson;
-import Service.HttpResponse;
+import Service.Classes.HttpResponse;
 
 import java.util.Base64;
 import java.util.HashMap;
 
 public class MainController {
     static String auth;
-    static HashMap<String, String> tokens = new HashMap<>();
+    static HashMap<String, Auth> auths = new HashMap<>();
 
     static Gson g = new Gson();
     //GET
@@ -84,19 +84,41 @@ public class MainController {
         }
     }
 
-    //not done
-    public static HttpResponse GetFriends(String[] params) {
-        return new HttpResponse(400, "Not yet implemented :(");
+
+    public static HttpResponse GetFriends(String[] params) { //params = {userid}
+        try {
+            User gotten = DatabaseController.GetUser(params[0]);
+            if (gotten == null) {
+                return new HttpResponse(404);
+            }
+            String res = g.toJson(gotten.FriendsId);
+            return new HttpResponse(200, res);
+        }
+        catch(Exception ex)
+        {
+            return new HttpResponse(400);
+        }
     }
     public static HttpResponse GetSimilar(String[] params) {
         return new HttpResponse(400, "Not yet implemented :(");
     }
 
+    //separate
     public static HttpResponse PublishActivity(String[] params) {
-        return new HttpResponse(400, "NI");
+        return new HttpResponse(400, "Not yet implemented");
     }
-    public static HttpResponse AuthoriseUser(String[] params) {
-        return new HttpResponse(400, "NI");
+    public static HttpResponse AuthoriseUser(String[] params) { //params = {body}
+        try {
+            Auth gotten = g.fromJson(params[0], Auth.class);
+            if (gotten == null) {
+                return new HttpResponse(400);
+            }
+            return new HttpResponse(gotten.equals(auths.get(Long.toString(gotten.Id))) ? 200 : 400);
+        }
+        catch(Exception ex)
+        {
+            return new HttpResponse(400);
+        }
     }
 
     //POST
@@ -195,16 +217,16 @@ public class MainController {
     }
 
 
-    public static void GetTokens() {
-        Auth[] auths = DatabaseController.GetAuths();
-        for (Auth auth : auths) {
-            tokens.put(Long.toString(auth.Id), Base64.getEncoder().encodeToString(auth.Password.getBytes()));
+    public static void GetAuths() {
+        Auth[] as = DatabaseController.GetAuths();
+        for (Auth a : as) {
+            auths.put(Long.toString(a.Id), a);
         }
     }
-    public static boolean CheckAuth(String s) {
-        return auth.equals(tokens.get(s));
+    public static boolean CheckAuth(String a) {
+        return auth.equals(auths.get(a).GetToken());
     }
-    public static void SetAuth(String s) {
-        auth = s;
+    public static void SetAuth(String a) {
+        auth = a;
     }
 }

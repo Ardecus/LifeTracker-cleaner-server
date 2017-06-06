@@ -1,5 +1,6 @@
-package Controller;
+package Controller.Server;
 
+import Controller.ApiHandler.ApiHandler;
 import com.sun.net.httpserver.*;
 
 import java.io.*;
@@ -9,17 +10,44 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.*;
 
-public class HttpsController {
-    void start(int port) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException,
+public class Https extends Server{
+    public Https() {
+        port = 8989;
+    }
+
+    public Https(int port) {
+        this.port = port;
+    }
+
+    public Https(Class<? extends ApiHandler> apiClass) {
+        port = 8989;
+        try {
+            handler = apiClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Https(int port, Class<? extends ApiHandler> apiClass) {
+        this.port = port;
+        try {
+            handler = apiClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void Start() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException,
             UnrecoverableKeyException, InterruptedException, KeyManagementException {
-        HttpsServer server = HttpsServer.create(new InetSocketAddress(port), 5);
-        server.createContext("/api", new ApiHandler());
+        com.sun.net.httpserver.HttpsServer server = com.sun.net.httpserver.HttpsServer.create(new InetSocketAddress(port), 5);
+        server.createContext("/api", handler);
 
         char[] storepass = "storepass".toCharArray();
         char[] keypass = "serverpass".toCharArray();
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(HttpsController.class.getResourceAsStream("server.jks"), storepass);
+        ks.load(Https.class.getResourceAsStream("server.jks"), storepass);
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, keypass);

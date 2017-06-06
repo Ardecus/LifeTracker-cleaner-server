@@ -1,4 +1,6 @@
-package Service;
+package Service.Classes;
+
+import Service.Interfaces.ProcessRequest;
 
 import java.util.ArrayList;
 

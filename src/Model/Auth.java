@@ -2,6 +2,8 @@ package Model;
 
 import Controller.DatabaseController;
 
+import java.util.Base64;
+
 public class Auth extends Identified{
     public String Name;
     public String Password;
@@ -21,5 +23,9 @@ public class Auth extends Identified{
         Password = password;
         User user = DatabaseController.GetUser(Id.toString());
         Name = user.Name;
+    }
+
+    public String GetToken() {
+        return Base64.getEncoder().encodeToString(Password.getBytes());
     }
 }
