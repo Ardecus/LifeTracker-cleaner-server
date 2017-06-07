@@ -65,7 +65,6 @@ public class UriTree {
                 (params) -> GetFriends(params)
         }));
         user.Subnodes.add(new Node("authorise", new ProcessRequest[]{
-                null,
                 (params) ->AuthoriseUser(params)
         }));
         //check

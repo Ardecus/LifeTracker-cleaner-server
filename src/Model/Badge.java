@@ -15,6 +15,6 @@ public class Badge {
 
     public static void LoadBadges()
     {
-        Badges = DatabaseController.GetBadges();
+        Badges = DatabaseController.getInstance().GetBadges();
     }
 }

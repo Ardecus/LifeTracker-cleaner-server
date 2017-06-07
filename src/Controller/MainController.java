@@ -11,11 +11,13 @@ public class MainController {
     static String auth;
     static HashMap<String, Auth> auths = new HashMap<>();
 
+    static DatabaseController dc = DatabaseController.getInstance();
+
     static Gson g = new Gson();
     //GET
     public static HttpResponse GetUser(String[] params) { //params = {userid}
         try {
-            User gotten = DatabaseController.GetUser(params[0]);
+            User gotten = dc.GetUser(params[0]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -29,7 +31,7 @@ public class MainController {
     }
     public static HttpResponse GetActivity(String[] params) { //params = {userid???, activityid}
         try {
-            Activity gotten = DatabaseController.GetActivity(params[1]);
+            Activity gotten = dc.GetActivity(params[1]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -43,7 +45,7 @@ public class MainController {
     }
     public static HttpResponse GetActivities(String[] params) { //params = {userid}
         try {
-            Activity[] gotten = DatabaseController.GetActivities(params[0]);
+            Activity[] gotten = dc.GetActivities(params[0]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -57,7 +59,7 @@ public class MainController {
     }
     public static HttpResponse GetCheck(String[] params) { //params = {userid???, activityid???, checkid}
         try {
-            Check gotten = DatabaseController.GetCheck(params[2]);
+            Check gotten = dc.GetCheck(params[2]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -71,7 +73,7 @@ public class MainController {
     }
     public static HttpResponse GetChecks(String[] params) { //params = {userid???, activityid}
         try {
-            Check[] gotten = DatabaseController.GetChecks(params[1]);
+            Check[] gotten = dc.GetChecks(params[1]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -84,10 +86,9 @@ public class MainController {
         }
     }
 
-
     public static HttpResponse GetFriends(String[] params) { //params = {userid}
         try {
-            User gotten = DatabaseController.GetUser(params[0]);
+            User gotten = dc.GetUser(params[0]);
             if (gotten == null) {
                 return new HttpResponse(404);
             }
@@ -127,8 +128,8 @@ public class MainController {
             Auth gotten = g.fromJson(params[0], Auth.class);
             User user = new User(gotten.Name);
             gotten.Id = user.Id;
-            DatabaseController.PostAuth(gotten);
-            DatabaseController.PostUser(user);
+            dc.PostAuth(gotten);
+            dc.PostUser(user);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -140,7 +141,7 @@ public class MainController {
         try {
             Activity gotten = g.fromJson(params[1], Activity.class);
             gotten.UserId = Long.parseLong(params[0]); //?
-            DatabaseController.PostActivity(gotten);
+            dc.PostActivity(gotten);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -152,7 +153,7 @@ public class MainController {
         try {
             Check gotten = g.fromJson(params[2], Check.class);
             gotten.ActivityId = Long.parseLong(params[1]); //?
-            DatabaseController.PostCheck(gotten);
+            dc.PostCheck(gotten);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -165,15 +166,15 @@ public class MainController {
     public static HttpResponse PutUser(String[] params) { //params = {body}
         try {
             User gotten = g.fromJson(params[0], User.class);
-            User prev = DatabaseController.GetUser(gotten.Id.toString());
+            User prev = dc.GetUser(gotten.Id.toString());
             if (gotten.FriendsId != prev.FriendsId) {
                 int i = gotten.FriendsId.length - 1;
                 while (i > prev.FriendsId.length - 1) {
-                    DatabaseController.PostFriend(gotten.Id, gotten.FriendsId[i]);
+                    dc.PostFriend(gotten.Id, gotten.FriendsId[i]);
                     i--;
                 }
             }
-            DatabaseController.PutUser(gotten);
+            dc.PutUser(gotten);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -185,7 +186,7 @@ public class MainController {
         try {
             Activity gotten = g.fromJson(params[1], Activity.class);
             gotten.UserId = Long.parseLong(params[0]); //?
-            DatabaseController.PutActivity(gotten);
+            dc.PutActivity(gotten);
             return new HttpResponse(201);
         }
         catch(Exception ex)
@@ -197,7 +198,7 @@ public class MainController {
     //DELETE
     public static HttpResponse DeleteUser(String[] params) { //params = {userid}
         try {
-            DatabaseController.DeleteUser(params[0]);
+            dc.DeleteUser(params[0]);
             return new HttpResponse(200);
         }
         catch(Exception ex)
@@ -207,7 +208,7 @@ public class MainController {
     }
     public static HttpResponse DeleteActivity(String[] params) { //params = {userid???, activityid
         try {
-            DatabaseController.DeleteActivity(params[1]);
+            dc.DeleteActivity(params[1]);
             return new HttpResponse(200);
         }
         catch(Exception ex)
@@ -218,7 +219,7 @@ public class MainController {
 
 
     public static void GetAuths() {
-        Auth[] as = DatabaseController.GetAuths();
+        Auth[] as = dc.GetAuths();
         for (Auth a : as) {
             auths.put(Long.toString(a.Id), a);
         }
