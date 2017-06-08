@@ -13,7 +13,7 @@ public class HTTPSClient {
             throws CertificateException, InterruptedException, UnrecoverableKeyException, NoSuchAlgorithmException,
             IOException, KeyManagementException, KeyStoreException {
 
-        URL url = new URL("https://localhost:8000/");
+        URL url = new URL("https://localhost:8989/");
 
         HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
         con.setRequestMethod( "GET" );

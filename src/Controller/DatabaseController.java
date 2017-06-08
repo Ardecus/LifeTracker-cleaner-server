@@ -57,7 +57,7 @@ public class DatabaseController {
     }
 
     //всякие трайкэтчи и проверки на адекватность параметров должны быть в MainController, а не здесь
-    public  Auth GetAuths(String userid){
+    public  Auth GetAuth(String userid){
         Auth auth = new Auth();
         query = "SELECT Pass FROM User WHERE id="+userid+";";
         try {

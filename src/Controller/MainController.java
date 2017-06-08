@@ -114,7 +114,7 @@ public class MainController {
             if (gotten == null) {
                 return new HttpResponse(400);
             }
-            return new HttpResponse(gotten.equals(auths.get(Long.toString(gotten.Id))) ? 200 : 400);
+            return new HttpResponse(gotten.equals(auths.get(Long.toString(gotten.Id))) ? 200 : 401);
         }
         catch(Exception ex)
         {
