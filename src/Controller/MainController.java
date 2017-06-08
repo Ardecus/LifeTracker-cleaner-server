@@ -29,6 +29,20 @@ public class MainController {
             return new HttpResponse(400);
         }
     }
+    public static HttpResponse GetUsers(String[] params) { //params = {userid}
+        try {
+            User[] gotten = dc.GetUsers();
+            if (gotten == null) {
+                return new HttpResponse(404);
+            }
+            String res = g.toJson(gotten);
+            return new HttpResponse(200, res);
+        }
+        catch(Exception ex)
+        {
+            return new HttpResponse(400);
+        }
+    }
     public static HttpResponse GetActivity(String[] params) { //params = {userid???, activityid}
         try {
             Activity gotten = dc.GetActivity(params[1]);
@@ -220,6 +234,9 @@ public class MainController {
 
     public static void GetAuths() {
         Auth[] as = dc.GetAuths();
+        if (as == null) {
+            return;
+        }
         for (Auth a : as) {
             auths.put(Long.toString(a.Id), a);
         }

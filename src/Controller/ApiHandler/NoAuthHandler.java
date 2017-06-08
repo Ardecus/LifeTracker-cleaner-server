@@ -1,6 +1,7 @@
 package Controller.ApiHandler;
 
 import Controller.MainController;
+import Model.Badge;
 import Service.Classes.HttpResponse;
 import Service.Classes.Node;
 import Service.Classes.UriTree;
@@ -16,6 +17,7 @@ public class NoAuthHandler extends ApiHandler {
     public NoAuthHandler()
     {
         MainController.GetAuths();
+        Badge.LoadBadges();
     }
 
     @Override
@@ -24,7 +26,7 @@ public class NoAuthHandler extends ApiHandler {
         System.out.println(t.getResponseBody());
         HttpResponse response;
         try {
-            response = parseRequest(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
+            response = parseRequest(t.getRequestURI(), t.getRequestMethod(), readBody(t));
         }
         catch (Exception ex) {
             System.out.println("Failed to process request");

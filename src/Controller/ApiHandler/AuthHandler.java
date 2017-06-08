@@ -1,6 +1,7 @@
 package Controller.ApiHandler;
 
 import Controller.MainController;
+import Model.Badge;
 import Service.Classes.HttpResponse;
 import Service.Classes.Node;
 import Service.Classes.UriTree;
@@ -18,6 +19,7 @@ public class AuthHandler extends ApiHandler {
     public AuthHandler()
     {
         MainController.GetAuths();
+        Badge.LoadBadges();
     }
 
     @Override
@@ -29,7 +31,7 @@ public class AuthHandler extends ApiHandler {
             String auth = t.getRequestHeaders().getFirst("Authorisation");
             auth = Base64.getDecoder().decode(auth.getBytes()).toString();
             MainController.SetAuth(auth);
-            response = parseRequest(t.getRequestURI(), t.getRequestMethod(), t.getRequestBody().toString());
+            response = parseRequest(t.getRequestURI(), t.getRequestMethod(), readBody(t));
         }
         catch (UnauthorizedException ex) {
             System.out.println("Unauthorized request");

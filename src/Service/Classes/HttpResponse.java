@@ -3,7 +3,7 @@ package Service.Classes;
 public class HttpResponse
 {
     public int Code;
-    public String Body;
+    public String Body = "";
 
     public HttpResponse(int code)
     {

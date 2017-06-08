@@ -33,6 +33,9 @@ public class UriTree {
                 (params) -> DeleteUser(params)
         });
         first.Subnodes.add(user);
+        first.Subnodes.add(new Node("users", new ProcessRequest[]{
+                (params) -> GetUsers(params)
+        }));
         /*
         //panel
         Node panel = new Node("_panelid", new ProcessRequest[]{
@@ -80,6 +83,7 @@ public class UriTree {
         /*
         current version of a tree:
         .
+        ____users
         ____-userid
         ____________activities
         ____________authorise
